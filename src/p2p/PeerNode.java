@@ -45,8 +45,11 @@ public class PeerNode {
                 return;
 
             // MSG fromPeerId texto...
-            if (line.startsWith("MSG ")) {
-                System.out.println("[RECV] " + line.substring(4));
+            if (P2PProtocol.isCommand(line, P2PProtocol.MSG)) {
+                String[] args = P2PProtocol.parseArgs(line);
+                String from = args.length > 0 ? args[0] : "?";
+                String text = args.length > 1 ? line.substring(line.indexOf(args[1])) : "";
+                System.out.println("[RECV from " + from + "] " + text);
             } else {
                 System.out.println("[RECV] " + line);
             }
@@ -102,7 +105,7 @@ public class PeerNode {
     private void sendMessage(String host, int port, String msg) {
         try (Socket s = new Socket(host, port);
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()))) {
-            out.write("MSG " + peerId + " " + msg);
+            out.write(P2PProtocol.buildMsg(peerId, msg));
             out.newLine();
             out.flush();
             System.out.println("[SENT] to " + host + ":" + port);

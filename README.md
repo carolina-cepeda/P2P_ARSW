@@ -45,10 +45,14 @@ java -cp out p2p.PeerMain peerB 7002 127.0.0.1
 
 Una vez que los peers estén corriendo, se pueden usar estos comandos en la consola de cada uno:
 
-```markdown
-- **`peers`**: Lista todos los peers registrados en el tracker.
-- **`send <peer_name> <mensaje>`**: Envía un mensaje a otro peer (ej: `send peerB hola`).
-```
+- **peers**: Lista todos los peers registrados en el tracker.
+
+    ![alt text](image.png)
+
+- **send <peer_name> <mensaje>**: Envía un mensaje a otro peer (ej: `send peerB hola`).
+
+![alt text](doc/msg.png)
+
 ## ¿Qué es P2P?
 **P2P (peer to peer)** es un modelo de red en el que los nodos (peers) se comunican directamente entre sí, sin necesidad de un controlador único, esto se debe a que el control se distribuye entre los mismos nodos al tomar la función de servidor y cliente cuando es necesario. En este proyecto se implementa un modelo híbrido, donde existe un tracker que se encarga de mantener un registro de los peers que se encuentran en la red y de facilitar la comunicación entre ellos.
 
@@ -58,4 +62,14 @@ Una vez que los peers estén corriendo, se pueden usar estos comandos en la cons
 *   **Escalabilidad**: La red puede crecer sin necesidad de aumentar la complejidad del sistema.
 
 ## Protocolo de comunicación
-...
+Se implementa el protocolo P2PProtocol.java que define las constantes de los comandos y las funciones para construir y dar formato a los mensajes. Los comandos principales que se han reconocido son:
+
+- REGISTER: Registra un peer en el tracker.
+- LIST: Lista todos los peers registrados en el tracker.
+- MSG: Envía un mensaje a otro peer.
+- OK: Indica que un comando se ejecutó correctamente.
+- ERR: Indica que un comando falló.
+- PEERS: Envía la lista de peers registrados en el tracker.
+
+La estructura se basa en el patrón de comando: `COMANDO ARG1 ARG2 ...`. Gracias a la implementación de la clase `Protocol.java`, se logra una presentación uniforme de los mensajes, permitiendo que cualquier instrucción sea procesada bajo el mismo esquema de argumentos sin importar su tipo. Esto ultimo trayendo claras ventajas para la mantenibilidad y calidad del código.
+```

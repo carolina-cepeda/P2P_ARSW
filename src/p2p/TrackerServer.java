@@ -32,34 +32,32 @@ public class TrackerServer {
             if (line == null)
                 return;
 
-            String[] parts = line.trim().split("\\s+");
-            String cmd = parts[0];
+            String[] args = P2PProtocol.parseArgs(line);
 
-            if ("REGISTER".equalsIgnoreCase(cmd)) {
+            if (P2PProtocol.isCommand(line, P2PProtocol.REGISTER)) {
                 // REGISTER peerId port
-                if (parts.length != 3) {
-
-                    out.write("ERR Invalid REGISTER");
+                if (args.length != 2) {
+                    out.write(P2PProtocol.buildError("Invalid REGISTER"));
                 } else {
-                    String peerId = parts[1];
-                    int peerPort = Integer.parseInt(parts[2]);
+                    String peerId = args[0];
+                    int peerPort = Integer.parseInt(args[1]);
                     String ip = client.getInetAddress().getHostAddress();
                     peers.put(peerId, new PeerInfo(peerId, ip, peerPort));
-                    out.write("OK");
+                    out.write(P2PProtocol.buildOk());
                 }
                 out.newLine();
                 out.flush();
                 return;
             }
 
-            if ("LIST".equalsIgnoreCase(cmd)) {
-                out.write(buildList());
+            if (P2PProtocol.isCommand(line, P2PProtocol.LIST)) {
+                out.write(buildPeerList());
                 out.newLine();
                 out.flush();
                 return;
             }
 
-            out.write("ERR Unknown command");
+            out.write(P2PProtocol.buildError("Unknown command"));
             out.newLine();
             out.flush();
 
@@ -68,9 +66,9 @@ public class TrackerServer {
         }
     }
 
-    private String buildList() {
-        // PEERS peer1@ip:port,peer2@ip:port
-        StringBuilder sb = new StringBuilder("PEERS ");
+    private String buildPeerList() {
+        // Construye la lista: peer1@ip:port,peer2@ip:port
+        StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (PeerInfo p : peers.values()) {
             if (!first)
@@ -78,7 +76,7 @@ public class TrackerServer {
             sb.append(p.peerId).append("@").append(p.ip).append(":").append(p.port);
             first = false;
         }
-        return sb.toString();
+        return P2PProtocol.buildPeers(sb.toString());
     }
 
     public static void main(String[] args) throws Exception {
