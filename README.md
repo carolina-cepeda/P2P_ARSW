@@ -47,7 +47,7 @@ Una vez que los peers estén corriendo, se pueden usar estos comandos en la cons
 
 - **peers**: Lista todos los peers registrados en el tracker.
 
-    ![alt text](image.png)
+    ![alt text](doc/peers.png)
 
 - **send <peer_name> <mensaje>**: Envía un mensaje a otro peer (ej: `send peerB hola`).
 
